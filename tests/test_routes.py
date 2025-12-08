@@ -143,3 +143,42 @@ class TestAccountService(TestCase):
         """It should return 404 when account is not found"""
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_account(self):
+        """It should Update an existing account"""
+        # Create an account to update
+        account = self._create_accounts(1)[0]
+        # Update the account
+        new_account_data = {
+            "name": "Updated Name",
+            "email": "updated@email.com",
+            "address": "Updated Address",
+            "phone_number": "555-9999"
+        }
+        response = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json=new_account_data,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify the account was updated
+        updated_account = response.get_json()
+        self.assertEqual(updated_account["name"], "Updated Name")
+        self.assertEqual(updated_account["email"], "updated@email.com")
+        self.assertEqual(updated_account["address"], "Updated Address")
+        self.assertEqual(updated_account["phone_number"], "555-9999")
+
+    def test_update_account_not_found(self):
+        """It should return 404 when updating a non-existent account"""
+        new_account_data = {
+            "name": "Does Not Exist",
+            "email": "notfound@email.com",
+            "address": "Nowhere",
+            "phone_number": "000-0000"
+        }
+        response = self.client.put(
+            f"{BASE_URL}/0",
+            json=new_account_data,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
