@@ -206,7 +206,7 @@ class TestAccountService(TestCase):
     def test_list_all_accounts(self):
         """It should List all accounts"""
         # Create 5 accounts
-        accounts = self._create_accounts(5)
+        self._create_accounts(5)
         # Get the list of accounts
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
